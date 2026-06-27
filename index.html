@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ช่องทางการชำระเงิน | Payment Gateways</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            background: #f8fafc;
+        }
+
+        .bank-logo {
+            width: 50px;
+            height: 50px;
+            background: #4f46e5; /* สีสมมุติ สามารถเปลี่ยนตามสีธนาคารได้ */
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 12px;
+        }
+
+        .bank-info h2 {
+            font-size: 18px;
+            color: #334155;
+            margin-bottom: 4px;
+        }
+
+        .account-number-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin: 14px 0;
+        }
+
+        .account-num {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #1e293b;
+        }
+
+        .btn-copy {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: #4338ca;
+        }
+
+        .qr-static {
+            width: 160px;
+            height: 160px;
+            margin: 10px auto 0;
+            display: block;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+
+        .qr-static:hover {
+            transform: scale(1.03);
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            font-size: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .input-wrapper .currency {
+            position: absolute;
+            right: 16px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .dynamic-qr-box {
+            display: none; /* ซ่อนไว้ก่อนจนกว่าจะกรอกเงิน */
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .dynamic-qr-box h3 {
+            font-size: 16px;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        #dynamic-qr-img {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-container">
+    <div class="header">
+        <h1>ชำระเงิน</h1>
+        <p>กรุณาเลือกโอนเงินผ่านบัญชีธนาคาร หรือสแกน QR Code</p>
+    </div>
+
+    <!-- ส่วนที่ 1: ข้อมูลบัญชีธนาคารปกติ + QR โค้ดหลัก -->
+    <div class="card">
+        <div class="bank-logo">ธค</div>
+        <div class="bank-info">
+            <h2>ธนาคารกสิกรไทย</h2>
+            <p style="color: #64748b; font-size: 14px;">ชื่อบัญชี: นายสมชาย สายเปย์</p>
+        </div>
+        
+        <div class="account-number-box">
+            <!-- ป้อนเลขบัญชีของคุณตรงนี้ -->
+            <span class="account-num" id="account-id">123-4-56789-0</span>
+            <button class="btn-copy" onclick="copyAccount()">คัดลอก</button>
+        </div>
+
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 8px;">คิวอาร์โค้ดบัญชี (คลิกเพื่อดูรูปใหญ่)</p>
+        <!-- เปลี่ยน path รูป 'your-bank-qr.png' เป็นรูปคิวอาร์โค้ดของคุณ -->
+        <img src="https://via.placeholder.com/150?text=Your+QR+Code" alt="Bank QR Code" class="qr-static" onclick="window.open(this.src)">
+    </div>
+
+    <!-- ส่วนที่ 2: กรอกจำนวนเงินเพื่อเจนคิวอาร์โค้ดพร้อมยอดชำระ -->
+    <div class="input-group">
+        <label for="amount">กรอกยอดเงินที่ต้องชำระ (บาท)</label>
+        <div class="input-wrapper">
+            <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" oninput="generateDynamicQR()">
+            <span class="currency">บาท</span>
+        </div>
+    </div>
+
+    <!-- ส่วนแสดงผล QR โค้ดตามยอดเงิน -->
+    <div class="dynamic-qr-box" id="qr-box">
+        <h3>สแกนเพื่อจ่ายเงินจำนวน <span id="display-amount" style="color: #4f46e5; font-weight: bold;">0</span> บาท</h3>
+        <img id="dynamic-qr-img" src="" alt="PromptPay Amount QR">
+        <p class="footer-note">คิวอาร์โค้ดจะอัปเดตอัตโนมัติตามยอดเงินที่ท่านกรอก</p>
+    </div>
+</div>
+
+<script>
+    // ส่วนที่ 1: ฟังก์ชันคัดลอกเลขบัญชี
+    function copyAccount() {
+        const accountNum = document.getElementById('account-id').innerText.replace(/-/g, ''); // ลบขีดออกก่อนก๊อปปี้
+        navigator.clipboard.writeText(accountNum).then(() => {
+            const copyBtn = document.querySelector('.btn-copy');
+            copyBtn.innerText = 'คัดลอกแล้ว!';
+            copyBtn.style.background = '#10b981'; // เปลี่ยนเป็นสีเขียวเมื่อสำเร็จ
+            
+            // เปลี่ยนกลับเป็นแบบเดิมหลังจากผ่านไป 2 วินาที
+            setTimeout(() => {
+                copyBtn.innerText = 'คัดลอก';
+                copyBtn.style.background = '#4f46e5';
+            }, 2000);
+        }).catch(err => {
+            alert('ไม่สามารถคัดลอกได้ กรุณาคลุมดำและคัดลอกด้วยตัวเอง');
+        });
+    }
+
+    // ส่วนที่ 2: ฟังก์ชันเจน PromptPay QR Code ตามยอดเงิน
+    function generateDynamicQR() {
+        const amountInput = document.getElementById('amount').value;
+        const qrBox = document.getElementById('qr-box');
+        const qrImg = document.getElementById('dynamic-qr-img');
+        const displayAmount = document.getElementById('display-amount');
+        
+        // ใส่ "เลขพร้อมเพย์" หรือ "เบอร์โทรศัพท์ที่ผูกพร้อมเพย์" ของคุณตรงนี้ (ไม่มีขีด)
+        const promptpayID = "0812345678"; 
+
+        if (amountInput && amountInput > 0) {
+            // ดึง API สร้างคิวอาร์โค้ดพร้อมเพย์แบบกำหนดจำนวนเงินแบบ Real-time
+            const qrUrl = `https://promptpay.io/${promptpayID}/${parseFloat(amountInput).toFixed(2)}.png`;
+            
+            qrImg.src = qrUrl;
+            displayAmount.innerText = parseFloat(amountInput).toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            qrBox.style.display = 'block'; // แสดงกล่องคิวอาร์โค้ด
+        } else {
+            qrBox.style.display = 'none'; // ซ่อนกล่องคิวอาร์โค้ดหากไม่ได้กรอกเงินหรือยอดเป็น 0
+        }
+    }
+</script>
+
+</body>
+  </html>
